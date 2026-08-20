@@ -63,7 +63,7 @@ void calibrate() {
             sample_z
         );
     
-        vTaskDelay(pdMS_TO_TICKS(5);
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
     
     // Reerve space for the output.
@@ -87,8 +87,8 @@ void calibrate() {
     float_t mag_z = ...;
     
     // Depends on the implementation.
-    float* soft_iron_handle = soft_iron_matrix->implementation_handle;
-    float* hard_iron_handle = hard_iron_vector->implementation_handle;
+    float** soft_iron_handle = soft_iron_matrix->implementation_handle;
+    float** hard_iron_handle = hard_iron_vector->implementation_handle;
     
     // Apply the hard iron offset first.
     mag_x -= hard_iron_handle[0][0];
@@ -96,8 +96,8 @@ void calibrate() {
     mag_z -= hard_iron_handle[2][0];
     
     // Then apply the soft iron matrix.
-    float_t calibrated_mag_x = soft_iron_handle[0][0] * x + soft_iron_handle[0][1] * y + soft_iron_handle[0][2] * z;
-    float_t calibrated_mag_y = soft_iron_handle[1][0] * x + soft_iron_handle[1][1] * y + soft_iron_handle[1][2] * z;
-    float_t calibrated_mag_z = soft_iron_handle[2][0] * x + soft_iron_handle[2][1] * y + soft_iron_handle[2][2] * z;
+    float_t calibrated_mag_x = soft_iron_handle[0][0] * mag_x + soft_iron_handle[0][1] * mag_y + soft_iron_handle[0][2] * mag_z;
+    float_t calibrated_mag_y = soft_iron_handle[1][0] * mag_x + soft_iron_handle[1][1] * mag_y + soft_iron_handle[1][2] * mag_z;
+    float_t calibrated_mag_z = soft_iron_handle[2][0] * mag_x + soft_iron_handle[2][1] * mag_y + soft_iron_handle[2][2] * mag_z;
 }
 ```
