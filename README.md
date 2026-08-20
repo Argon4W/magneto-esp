@@ -66,7 +66,7 @@ void calibrate() {
         vTaskDelay(pdMS_TO_TICKS(5));
     }
     
-    // Reerve space for the output.
+    // Reserve space for the output.
     magneto_matrix_t* soft_iron_matrix = context.new_matrix_function(3, 3);
     magneto_matrix_t* hard_iron_vector = context.new_matrix_function(3, 1);
     
@@ -87,8 +87,8 @@ void calibrate() {
     float_t mag_z = ...;
     
     // Depends on the implementation.
-    float** soft_iron_handle = soft_iron_matrix->implementation_handle;
-    float** hard_iron_handle = hard_iron_vector->implementation_handle;
+    float** soft_iron_handle = (float**) soft_iron_matrix->implementation_handle;
+    float** hard_iron_handle = (float**) hard_iron_vector->implementation_handle;
     
     // Apply the hard iron offset first.
     mag_x -= hard_iron_handle[0][0];
