@@ -7,6 +7,10 @@
 #include <math.h>
 #include <tgmath.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 /**
  * @brief		Platform independent opaque matrix struct for holding implementation-specific handles of the matrix.
  * @attention	The matrix implementation should store the elements in float_t precision.
@@ -304,5 +308,9 @@ int32_t magneto_calculate(
 	magneto_matrix_t*						soft_iron_matrix,
 	magneto_matrix_t*						hard_iron_vector
 );
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // MATHLIBRARY_H
