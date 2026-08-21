@@ -24,7 +24,7 @@ typedef struct {
  * @retval	The created matrix.
  */
 typedef magneto_matrix_t* (*new_matrix_function_ptr)(
-	int32_t rows	/*!< rows of the allocated matrix. */,
+	int32_t rows,	/*!< rows of the allocated matrix. */
 	int32_t columns	/*!< columns of the allocated matrix. */
 );
 
@@ -69,7 +69,7 @@ typedef float_t (*get_matrix_element_function_ptr)(
 typedef void (*set_matrix_element_function_ptr)(
 	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
 	int32_t				row,	/*!< The row of the element. */
-	int32_t				column	/*!< The column of the element. */,
+	int32_t				column,	/*!< The column of the element. */
 	float_t				value	/*!< The value of the element. */
 );
 
@@ -79,7 +79,7 @@ typedef void (*set_matrix_element_function_ptr)(
 typedef void (*add_matrix_element_function_ptr)(
 	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
 	int32_t				row,	/*!< The row of the element. */
-	int32_t				column	/*!< The column of the element. */,
+	int32_t				column,	/*!< The column of the element. */
 	float_t				value	/*!< The value to be added to the element. */
 );
 
@@ -89,7 +89,7 @@ typedef void (*add_matrix_element_function_ptr)(
 typedef void (*multiply_matrix_element_function_ptr)(
 	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
 	int32_t				row,	/*!< The row of the element. */
-	int32_t				column	/*!< The column of the element. */,
+	int32_t				column,	/*!< The column of the element. */
 	float_t				value	/*!< The value to be multiplied to the element. */
 );
 
