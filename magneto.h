@@ -25,7 +25,7 @@ typedef struct {
  */
 typedef magneto_matrix_t* (*new_matrix_function_ptr)(
 	int32_t rows	/*!< rows of the allocated matrix. */,
-	int32_t	columns	/*!< columns of the allocated matrix. */
+	int32_t columns	/*!< columns of the allocated matrix. */
 );
 
 /**
@@ -35,7 +35,7 @@ typedef magneto_matrix_t* (*new_matrix_function_ptr)(
 typedef magneto_matrix_t* (*new_matrix_array_function_ptr)(
 	int32_t count,	/*!< Count of the matrices in the array. */
 	int32_t rows,	/*!< Rows of the allocated matrix in the array. */
-	int32_t	columns	/*!< Columns of the allocated matrix in the array. */
+	int32_t columns	/*!< Columns of the allocated matrix in the array. */
 );
 
 /**
