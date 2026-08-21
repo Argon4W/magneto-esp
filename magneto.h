@@ -97,8 +97,8 @@ typedef void (*multiply_matrix_element_function_ptr)(
  * @brief Platform independent function type of copying values from an existing matrix to another matrix.
  */
 typedef void (*copy_matrix_function_ptr)(
-	magneto_matrix_t*	source_matrix,		/*!< The source matrix to be copied. */
-	magneto_matrix_t*	destination_matrix	/*!< Destination matrix to store the values, or NULL to allocate a new matrix. */
+	magneto_matrix_t* source_matrix,		/*!< The source matrix to be copied. */
+	magneto_matrix_t* destination_matrix	/*!< Destination matrix to store the values, or NULL to allocate a new matrix. */
 );
 
 /**
