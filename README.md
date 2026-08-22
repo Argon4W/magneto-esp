@@ -24,25 +24,21 @@ The following example shows how to use this library to calibrate raw magnetomete
 void calibrate() {
     // Setup the math context.
     magneto_matrix_math_context_t context = {
-        .new_matrix_function = ...,
-        .new_matrix_array_function = ...,
-        .delete_matrix_function = ...,
-        .delete_matrix_array_function = ...,
-        .get_matrix_element_function = ...,
-        .set_matrix_element_function = ...,
-        .add_matrix_element_function = ...,
-        .multiply_matrix_element_function = ...,
-        .copy_matrix_function = ...,
-        .copy_matrix_block_function = ...,
-        .copy_matrix_block2_function = ...,
-        .multiply_matrix_function = ...,
-        .multiply_matrix_scalar_function = ...,
-        .subtract_matrix_function = ...,
-        .invert_matrix_in_place_function = ...,
-        .transpose_in_place_function = ...,
-        .normalize_cols_in_place_function = ...,
-        .negate_cols_in_place_function = ...,
-        .solve_matrix_eigen_function = ...
+        .new_matrix = ...,
+        .delete_matrix = ...,
+        .get_matrix_coefficient = ...,
+        .set_matrix_coefficient = ...,
+        .add_matrix_coefficient = ...,
+        .multiply_matrix_coefficient = ...,
+        .copy_matrix = ...,
+        .copy_matrix_block = ...,
+        .multiply_matrix = ...,
+        .subtract_matrix = ...,
+        .invert_matrix_in_place = ...,
+        .transpose_matrix_in_place = ...,
+        .normalize_matrix_in_place = ...,
+        .multiply_matrix_scalar_in_place = ...,
+        .solve_matrix_eigen = ...
     };
     
     // Create a sample container.
@@ -55,7 +51,7 @@ void calibrate() {
         float_t sample_z = ...;
         
         // Add the sample to the sample container.
-        magneto_add_sample(
+        magneto_sample(
             &context,
             sample_container,
             sample_x,
@@ -67,8 +63,8 @@ void calibrate() {
     }
     
     // Reserve space for the output.
-    magneto_matrix_t* soft_iron_matrix = context.new_matrix_function(3, 3);
-    magneto_matrix_t* hard_iron_vector = context.new_matrix_function(3, 1);
+    magneto_matrix_t* soft_iron_matrix = context.new_matrix(3, 3);
+    magneto_matrix_t* hard_iron_vector = context.new_matrix(3, 1);
     
     // Calibrate.
     magneto_calculate(

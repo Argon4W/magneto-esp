@@ -213,11 +213,11 @@ typedef struct {
 	copy_matrix_function_ptr						copy_matrix;						/*!< Implementation function of copying a matrix. */
 	copy_matrix_block_function_ptr					copy_matrix_block;					/*!< Implementation function of copying a block of matrix from a matrix to block of another matrix. */
 	multiply_matrix_function_ptr					multiply_matrix;					/*!< Implementation function of multiplying two matrices. */
-	multiply_matrix_scalar_in_place_function_ptr	multiply_matrix_scalar_in_place;	/*!< Implementation function of multiplying a matrix with a scalar */
 	subtract_matrix_function_ptr					subtract_matrix;					/*!< Implementation function of subtracting two matrices. */
 	invert_matrix_in_place_function_ptr				invert_matrix_in_place;				/*!< Implementation function of inverting a matrix. */
 	transpose_matrix_in_place_function_ptr			transpose_matrix_in_place;			/*!< Implementation function of transposing a matrix in place. */
 	normalize_matrix_in_place_function_ptr			normalize_matrix_in_place;			/*!< Implementation function of normalizing all column vectors of a matrix in place. */
+	multiply_matrix_scalar_in_place_function_ptr	multiply_matrix_scalar_in_place;	/*!< Implementation function of multiplying a matrix with a scalar */
 	solve_matrix_eigen_function_ptr					solve_matrix_eigen;					/*!< Implementation function of solving eigenvectors and eigenvalues of a square matrix. */
 } magneto_linear_algebra_context_t;
 
