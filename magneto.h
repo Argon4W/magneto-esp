@@ -1,7 +1,6 @@
 #ifndef MATHLIBRARY_H
 #define MATHLIBRARY_H
 
-#include <string.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <math.h>
@@ -16,247 +15,214 @@ extern "C" {
  * @attention	The matrix implementation should store the elements in float_t precision.
  */
 typedef struct {
-	void* implementation_handle; /*!< Opaque handle of the matrix used by the implementation. */
+	void* implementation_handle;
 } magneto_matrix_t;
 
 /**
- * @brief	Platform independent function type of creating a new matrix. All values of the matrix should be 0.0f when initialized.
- * @retval	The created matrix.
+ * @brief			Platform independent function type of creating a new matrix. All values of the matrix should be 0.0f when initialized.
+ * @param rows		rows of the allocated matrix.
+ * @param columns	columns of the allocated matrix.
+ * @retval			the created matrix.
  */
 typedef magneto_matrix_t* (*new_matrix_function_ptr)(
-	int32_t rows,	/*!< rows of the allocated matrix. */
-	int32_t columns	/*!< columns of the allocated matrix. */
+	int32_t rows,
+	int32_t columns
 );
 
 /**
- * @brief	Platform independent function type of creating a new matrix array.
- * @retval	The created matrix array.
- */
-typedef magneto_matrix_t* (*new_matrix_array_function_ptr)(
-	int32_t count,	/*!< Count of the matrices in the array. */
-	int32_t rows,	/*!< Rows of the allocated matrix in the array. */
-	int32_t columns	/*!< Columns of the allocated matrix in the array. */
-);
-
-/**
- * @brief Platform independent function type of deleting an existing matrix.
+ * @brief			Platform independent function type of deleting an existing matrix.
+ * @param matrix	The matrix to be deleted.
  */
 typedef void (*delete_matrix_function_ptr)(
-	magneto_matrix_t* matrix /*!< The matrix to be deleted. */
+	magneto_matrix_t* matrix
 );
 
 /**
- * @brief Platform independent function type of deleting an existing matrix array.
+ * @brief			Platform independent function type of getting the value of a coefficient in an existing matrix.
+ * @param matrix	the matrix of the coefficient.
+ * @param row		the row of the coefficient.
+ * @param column	the column of the coefficient.
+ * @retval			the value of the coefficient get from the matrix.
  */
-typedef void (*delete_matrix_array_function_ptr)(
-	magneto_matrix_t*	matrix_array,		/*!< The matrix array to be deleted. */
-	int32_t				matrix_array_length	/*!< The length of the matrix array. */
+typedef float_t (*get_matrix_coefficient_function_ptr)(
+	magneto_matrix_t*	matrix,
+	int32_t				row,
+	int32_t				column
 );
 
 /**
- * @brief	Platform independent function type of getting the value of an element in an existing matrix.
- * @retval	The value of the element get from the matrix.
+ * @brief			Platform independent function type of setting the value of a coefficient in an existing matrix.
+ * @param matrix	the matrix of the coefficient.
+ * @param row		the row of the coefficient.
+ * @param column	the column of the coefficient.
+ * @param value		the value of the coefficient.
  */
-typedef float_t (*get_matrix_element_function_ptr)(
-	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
-	int32_t				row,	/*!< The row of the element. */
-	int32_t				column	/*!< The column of the element. */
+typedef void (*set_matrix_coefficient_function_ptr)(
+	magneto_matrix_t*	matrix,
+	int32_t				row,
+	int32_t				column,
+	float_t				value
 );
 
 /**
- * @brief Platform independent function type of setting the value of an element in an existing matrix.
+ * @brief			Platform independent function type of adding a value to the existing value of an coefficient in an existing matrix.
+ * @param matrix	the matrix of the coefficient.
+ * @param row		the row of the coefficient.
+ * @param column	the column of the coefficient.
+ * @param value		the value to be added to the coefficient.
  */
-typedef void (*set_matrix_element_function_ptr)(
-	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
-	int32_t				row,	/*!< The row of the element. */
-	int32_t				column,	/*!< The column of the element. */
-	float_t				value	/*!< The value of the element. */
+typedef void (*add_matrix_coefficient_function_ptr)(
+	magneto_matrix_t*	matrix,
+	int32_t				row,
+	int32_t				column,
+	float_t				value
 );
 
 /**
- * @brief Platform independent function type of adding a value to the existing value of an element in an existing matrix.
+ * @brief			Platform independent function type of multiplying a value to the existing value of an coefficient in an existing matrix.
+ * @param matrix	the matrix of the coefficient.
+ * @param row		the row of the coefficient.
+ * @param column	the column of the coefficient.
+ * @param value		the value to be multiplied to the coefficient.
  */
-typedef void (*add_matrix_element_function_ptr)(
-	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
-	int32_t				row,	/*!< The row of the element. */
-	int32_t				column,	/*!< The column of the element. */
-	float_t				value	/*!< The value to be added to the element. */
+typedef void (*multiply_matrix_coefficient_function_ptr)(
+	magneto_matrix_t*	matrix,
+	int32_t				row,
+	int32_t				column,
+	float_t				value
 );
 
 /**
- * @brief Platform independent function type of multiplying a value to the existing value of an element in an existing matrix.
- */
-typedef void (*multiply_matrix_element_function_ptr)(
-	magneto_matrix_t*	matrix,	/*!< The matrix of the element. */
-	int32_t				row,	/*!< The row of the element. */
-	int32_t				column,	/*!< The column of the element. */
-	float_t				value	/*!< The value to be multiplied to the element. */
-);
-
-/**
- * @brief Platform independent function type of copying values from an existing matrix to another matrix.
+ * @brief						Platform independent function type of copying values from an existing matrix to another matrix.
+ * @param source_matrix			the source matrix to be copied.
+ * @param destination_matrix	destination matrix the values are copied to.
  */
 typedef void (*copy_matrix_function_ptr)(
-	magneto_matrix_t* source_matrix,		/*!< The source matrix to be copied. */
-	magneto_matrix_t* destination_matrix	/*!< Destination matrix to store the values, or NULL to allocate a new matrix. */
+	magneto_matrix_t* source_matrix,
+	magneto_matrix_t* destination_matrix
 );
 
 /**
- * @brief	Platform independent function type of copying a sub matrix from an existing matrix.
- * @retval	The result sub matrix from the source matrix.
+ * @brief						Platform independent function type of copying a block of matrix from an existing matrix to a block of another existing matrix.
+ * @param source_matrix			the source matrix to get the sub matrix.
+ * @param from_row				the start row of the block in the source matrix.
+ * @param from_column			the start column of the block in the source matrix.
+ * @param to_row				the start row of the block in the destination matrix.
+ * @param to_column				the start column of the block in the destination matrix.
+ * @param rows					the count of rows of the block.
+ * @param columns				the count of columns of the block.
+ * @param destination_matrix	destination matrix the block is copied to.
  */
-typedef magneto_matrix_t* (*copy_matrix_block_function_ptr)(
-	magneto_matrix_t*	source_matrix,		/*!< The source matrix to get the sub matrix. */
-	int32_t				from_row,			/*!< The start row of the sub matrix. */
-	int32_t				from_column,		/*!< The start column of the sub matrix. */
-	int32_t				rows,				/*!< Rows of the sub matrix. */
-	int32_t				columns,			/*!< Columns of the sub matrix. */
-	magneto_matrix_t*	destination_matrix	/*!< Destination matrix to store the sub matrix, or NULL to allocate a new matrix. */
+typedef void (*copy_matrix_block_function_ptr)(
+	magneto_matrix_t*	source_matrix,
+	int32_t				from_row,
+	int32_t				from_column,
+	int32_t				to_row,
+	int32_t				to_column,
+	int32_t				rows,
+	int32_t				columns,
+	magneto_matrix_t*	destination_matrix
 );
 
 /**
- * @brief	Platform independent function type of copying a sub matrix from an existing matrix (extended).
- * @retval	The result sub matrix from the source matrix.
+ * @brief						Platform independent function type of multiplying two existing matrices. (destination_matrix = left_matrix * right_matrix)
+ * @param left_matrix			the left matrix of the multiplication.
+ * @param right_matrix			the right matrix of the multiplication.
+ * @param destination_matrix	destination matrix to hold the result matrix.
  */
-typedef magneto_matrix_t* (*copy_matrix_block2_function_ptr)(
-	magneto_matrix_t*	source_matrix,		/*!< The source matrix to get the sub matrix. */
-	int32_t				from_row,			/*!< The start row of the sub matrix. */
-	int32_t				from_column,		/*!< The start column of the sub matrix. */
-	int32_t				rows,				/*!< Rows of the sub matrix. */
-	int32_t				columns,			/*!< Columns of the sub matrix. */
-	magneto_matrix_t*	destination_matrix,	/*!< Destination matrix to store the sub matrix, or NULL to allocate a new matrix. */
-	int32_t				to_row,				/*!< The first row in the destination matrix where the sub matrix stored. */
-	int32_t				to_column			/*!< The first column in the destination matrix where the sub matrix stored. */
+typedef void (*multiply_matrix_function_ptr)(
+	magneto_matrix_t* left_matrix,
+	magneto_matrix_t* right_matrix,
+	magneto_matrix_t* destination_matrix
 );
 
 /**
- * @brief	Platform independent function type of multiplying two existing matrices. (destination_matrix = left_matrix * right_matrix)
- * @retval	The result multiplied matrix.
+ * @brief						Platform independent function type of subtracting two existing matrices. (destination_matrix = left_matrix - right_matrix)
+ * @param left_matrix			the left matrix of the subtraction.
+ * @param right_matrix			the right matrix of the subtraction.
+ * @param destination_matrix	destination matrix to hold the result matrix.
  */
-typedef magneto_matrix_t* (*multiply_matrix_function_ptr)(
-	magneto_matrix_t* left_matrix,			/*!< The left matrix of the multiplication. */
-	magneto_matrix_t* right_matrix,			/*!< The right matrix of the multiplication. */
-	magneto_matrix_t* destination_matrix	/*!< Destination matrix to hold the result matrix, or NULL to allocate a new matrix. */
+typedef void (*subtract_matrix_function_ptr)(
+	magneto_matrix_t* left_matrix,
+	magneto_matrix_t* right_matrix,
+	magneto_matrix_t* destination_matrix
 );
 
 /**
- * @brief	Platform independent function type of multiplying an existing matrix with a scalar.
- * @retval	The result multiplied matrix.
+ * @brief				Platform independent function type of inverting an existing matrix in place.
+ * @param source_matrix	the matrix to be inverted.
  */
-typedef magneto_matrix_t* (*multiply_matrix_scalar_function_ptr)(
-	float_t				value,				/*!< The scalar to be multiplied to the matrix. */
-	magneto_matrix_t*	source_matrix,		/*!< The source_matrix of the multiplication. */
-	magneto_matrix_t*	destination_matrix	/*!< Destination matrix to hold the result matrix, or NULL to allocate a new matrix. */
+typedef void (*invert_matrix_in_place_function_ptr)(
+	magneto_matrix_t* source_matrix
 );
 
 /**
- * @brief	Platform independent function type of subtracting two existing matrices. (destination_matrix = left_matrix - right_matrix)
- * @retval	The result multiplied matrix.
+ * @brief				Platform independent function type of transposing an existing matrix in place.
+ * @param source_matrix	the matrix to be transposed.
  */
-typedef magneto_matrix_t* (*subtract_matrix_function_ptr)(
-	magneto_matrix_t* left_matrix,			/*!< The left matrix of the subtraction. */
-	magneto_matrix_t* right_matrix,			/*!< The right matrix of the subtraction. */
-	magneto_matrix_t* destination_matrix	/*!< Destination matrix to hold the result matrix, or NULL to allocate a new matrix. */
+typedef void (*transpose_matrix_in_place_function_ptr)(
+	magneto_matrix_t* source_matrix
 );
 
 /**
- * @brief	Platform independent function type of inverting an existing matrix in place.
- * @retval	The result inverted matrix.
+ * @brief				Platform independent function type of normalizing all column vectors of an existing matrix in place.
+ * @param source_matrix	the matrix to be normalized.
  */
-typedef magneto_matrix_t* (*invert_matrix_in_place_function_ptr)(
-	magneto_matrix_t* source_matrix /*!< The matrix to be inverted. */
+typedef void (*normalize_matrix_in_place_function_ptr)(
+	magneto_matrix_t* source_matrix
 );
 
 /**
- * @brief	Platform independent function type of transposing an existing matrix in place.
- * @retval	The result transposed matrix (identical to the input).
+ * @brief				Platform independent function type of multiplying an existing matrix with a scalar in place.
+ * @param source_matrix	the matrix to be multiplied with scalar.
+ * @param value			the scalar to be multiplied to the matrix.
  */
-typedef magneto_matrix_t* (*transpose_in_place_function_ptr)(
-	magneto_matrix_t* source_matrix /*!< The matrix to be transposed. */
+typedef void (*multiply_matrix_scalar_in_place_function_ptr)(
+	magneto_matrix_t*	source_matrix,
+	float_t				value
 );
 
 /**
- * @brief	Platform independent function type of normalizing all column vectors of an existing matrix in place.
- * @retval	The result normalized matrix (identical to the input).
+ * @brief								Platform independent function type of solving eigenvectors and eigenvalues of an existing square matrix.
+ * @attention							destination_eigenvalues_real and destination_eigenvalues_imag are column vectors (n rows 1 col matrices).
+ * @param source_matrix					the source square matrix to be solved.
+ * @param destination_eigenvectors_real	the real part of the eigenvectors ass column vectors packed in the matrix. The i-th column vector is the real part of the i-th eigenvector.
+ * @param destination_eigenvectors_imag	the imaginary part of the eigenvectors ass column vectors packed in the matrix. The i-th column vector is the imaginary part of the i-th eigenvector.
+ * @param destination_eigenvalues_real	the real part of the eigenvalues packed in the column vector. The i-th value is the real part of the i-th eigenvalue.
+ * @param destination_eigenvalues_imag	the imaginary part of the eigenvalues packed in the column vector. The i-th value is the imaginary part of the i-th eigenvalue.
+ * @retval								the status of the eigen solving result. ("0" = successful, other value = failed).
  */
-typedef magneto_matrix_t* (*normalize_cols_in_place_function_ptr)(
-	magneto_matrix_t* source_matrix /*!< The matrix to be normalized. */
+typedef uint8_t (*solve_matrix_eigen_function_ptr)(
+	magneto_matrix_t* source_matrix,
+	magneto_matrix_t* destination_eigenvectors_real,
+	magneto_matrix_t* destination_eigenvectors_imag,
+	magneto_matrix_t* destination_eigenvalues_real,
+	magneto_matrix_t* destination_eigenvalues_imag
 );
 
 /**
- * @brief	Platform independent function type of negating all column vectors of an existing matrix in place.
- * @retval	The result negated matrix (identical to the input).
- */
-typedef magneto_matrix_t* (*negate_cols_in_place_function_ptr)(
-	magneto_matrix_t* source_matrix /*!< The matrix to be negated. */
-);
-
-/**
- *	@brief Result struct holding solved eigenvectors and eigenvalues of an existing matrix.
- *	@attention
- *
- *	Every element matrix in the eigenvectors array should be:
- *	[
- *		Xr, Xi,
- *		Yr, Yi,
- *		Zr, Zi
- *	];
- *
- *	The first column vector [Xr, Yr, Zr] of the matrix is the real part of the eigenvector.
- *	The second column vector [Xi, Yi, Zi] of the matrix is the imagine part of the eigenvector.
- *
- *	Every element matrix in the eigenvalues array should be:
- *	[
- *		Vr, Vi
- *	];
- *
- *	The first value (Vr) of the matrix is the real part of the eigenvalue.
- *	The second value (Vi) of the matrix is the imagine part of the eigenvalue.
- *
- *	The i-th element matrix of the eigenvalues is the eigenvalue corresponding to the i-th element matrix of the eigenvectors.
+ * @brief Platform independent linear algebra function interface context needed by Magento.
  */
 typedef struct {
-	uint8_t				status;			/*!< The status of the result. ("0" = successful, other value = failed). */
-	magneto_matrix_t*	eigenvectors;	/*!< The solved eigenvectors array. The array size should be the same as the rows or cols of the source matrix. Every matrix in the array should be 2 cols and the same rows as the source matrix. The first column vector of the matrix is the real part of the eigen vector. The second column vector of the matrix is the imagine part of the eigen vector. */
-	magneto_matrix_t*	eigenvalues;	/*!< The solved eigenvalues array, The array size should be the same as the rows or cols of the source matrix. Every matrix in the array should be 1 row and 2 cols. The first value of the matrix is the real part of the eigen value. The second value of the matrix is the imaging part of the eigen value. */
-} magneto_matrix_eigen_solve_result_t;
+	new_matrix_function_ptr							new_matrix;							/*!< Implementation function of creating a matrix. */
+	delete_matrix_function_ptr						delete_matrix;						/*!< Implementation function of deleting a matrix. */
+	get_matrix_coefficient_function_ptr				get_matrix_coefficient;				/*!< Implementation function of getting the value of an coefficient in a matrix. */
+	set_matrix_coefficient_function_ptr				set_matrix_coefficient;				/*!< Implementation function of setting the value of an coefficient in a matrix. */
+	add_matrix_coefficient_function_ptr				add_matrix_coefficient;				/*!< Implementation function of adding a value to the existing value of an coefficient in a matrix. */
+	multiply_matrix_coefficient_function_ptr		multiply_matrix_coefficient;		/*!< Implementation function of multiplying a value to the existing value of an coefficient in a matrix. */
+	copy_matrix_function_ptr						copy_matrix;						/*!< Implementation function of copying a matrix. */
+	copy_matrix_block_function_ptr					copy_matrix_block;					/*!< Implementation function of copying a block of matrix from a matrix to block of another matrix. */
+	multiply_matrix_function_ptr					multiply_matrix;					/*!< Implementation function of multiplying two matrices. */
+	multiply_matrix_scalar_in_place_function_ptr	multiply_matrix_scalar_in_place;	/*!< Implementation function of multiplying a matrix with a scalar */
+	subtract_matrix_function_ptr					subtract_matrix;					/*!< Implementation function of subtracting two matrices. */
+	invert_matrix_in_place_function_ptr				invert_matrix_in_place;				/*!< Implementation function of inverting a matrix. */
+	transpose_matrix_in_place_function_ptr			transpose_matrix_in_place;			/*!< Implementation function of transposing a matrix in place. */
+	normalize_matrix_in_place_function_ptr			normalize_matrix_in_place;			/*!< Implementation function of normalizing all column vectors of a matrix in place. */
+	solve_matrix_eigen_function_ptr					solve_matrix_eigen;					/*!< Implementation function of solving eigenvectors and eigenvalues of a square matrix. */
+} magneto_linear_algebra_context_t;
 
 /**
- * @brief	Platform independent function type of solving eigenvectors and eigenvalues of an existing square matrix.
- * @retval	The result struct holding the solved eigenvectors and eigenvalues.
- */
-typedef magneto_matrix_eigen_solve_result_t* (*solve_matrix_eigen_function_ptr)(
-	magneto_matrix_t*						source_matrix,		/*!< The square matrix to be solved. */
-	magneto_matrix_eigen_solve_result_t*	destination_result	/*!< Destination result struct to hold the solved eigenvectors and eigenvalues, or NULL to allocate a new result struct and its matrices. */
-);
-
-/**
- * @brief Platform independent math function interface context needed by Magento.
- */
-typedef struct {
-	new_matrix_function_ptr						new_matrix_function;				/*!< Implementation function of creating a matrix. */
-	new_matrix_array_function_ptr				new_matrix_array_function;			/*!< Implementation function of creating a matrix array. */
-	delete_matrix_function_ptr					delete_matrix_function;				/*!< Implementation function of deleting a matrix. */
-	delete_matrix_array_function_ptr			delete_matrix_array_function;		/*!< Implementation function of deleting a matrix array. */
-	get_matrix_element_function_ptr				get_matrix_element_function;		/*!< Implementation function of getting the value of an element in a matrix. */
-	set_matrix_element_function_ptr				set_matrix_element_function;		/*!< Implementation function of setting the value of an element in a matrix. */
-	add_matrix_element_function_ptr				add_matrix_element_function;		/*!< Implementation function of adding a value to the existing value of an element in a matrix. */
-	multiply_matrix_element_function_ptr		multiply_matrix_element_function;	/*!< Implementation function of multiplying a value to the existing value of an element in a matrix. */
-	copy_matrix_function_ptr					copy_matrix_function;				/*!< Implementation function of copying a matrix. */
-	copy_matrix_block_function_ptr				copy_matrix_block_function;			/*!< Implementation function of copying a sub matrix from a matrix. */
-	copy_matrix_block2_function_ptr				copy_matrix_block2_function;		/*!< Implementation function of copying a sub matrix from a matrix. (extended) */
-	multiply_matrix_function_ptr				multiply_matrix_function;			/*!< Implementation function of multiplying two matrices. */
-	multiply_matrix_scalar_function_ptr			multiply_matrix_scalar_function;	/*!< Implementation function of multiplying a matrix with a scalar */
-	subtract_matrix_function_ptr				subtract_matrix_function;			/*!< Implementation function of subtracting two matrices. */
-	invert_matrix_in_place_function_ptr			invert_matrix_in_place_function;	/*!< Implementation function of inverting a matrix. */
-	transpose_in_place_function_ptr				transpose_in_place_function;		/*!< Implementation function of transposing a matrix in place. */
-	normalize_cols_in_place_function_ptr		normalize_cols_in_place_function;	/*!< Implementation function of normalizing all column vectors of a matrix in place. */
-	negate_cols_in_place_function_ptr			negate_cols_in_place_function;		/*!< Implementation function of negating all column vectors of a matrix in place. */
-	solve_matrix_eigen_function_ptr				solve_matrix_eigen_function;		/*!< Implementation function of solving eigenvectors and eigenvalues for a square matrix. */
-} magneto_matrix_math_context_t;
-
-/**
- * @brief Struct for containing incoming 3-dimensional magnetometer measurement samples.
+ * @brief Struct for recording incoming 3-dimensional magnetometer measurement samples.
  */
 typedef struct {
 	magneto_matrix_t*	sample_ata_matrix;	/*!< The ATA matrix of the samples. */
@@ -265,45 +231,45 @@ typedef struct {
 } magneto_sample_container_t;
 
 /**
- * @brief			Create a new sample container struct for containing incoming 3-dimensional magnetometer measurement samples.
- * @param context	implementation of the platform independent function interfaces, as pointer.
+ * @brief			Create a new sample container struct for recording incoming 3-dimensional magnetometer measurement samples.
+ * @param context	implementation of the platform independent linear algebra function interfaces.
  * @retval			the created sample container struct.
  */
-magneto_sample_container_t* magneto_new_sample_container(const magneto_matrix_math_context_t* context);
+magneto_sample_container_t* magneto_new_sample_container(const magneto_linear_algebra_context_t* context);
 
 /**
  * @brief					Delete the sample container struct.
- * @param context			implementation of the platform independent function interfaces, as pointer.
- * @param sample_container	The sample container to be deleted.
+ * @param context			implementation of the platform independent linear algebra function interfaces.
+ * @param sample_container	the sample container to be deleted.
  */
-void magneto_delete_sample_container(const magneto_matrix_math_context_t* context, magneto_sample_container_t* sample_container);
+void magneto_delete_sample_container(const magneto_linear_algebra_context_t* context, magneto_sample_container_t* sample_container);
 
 /**
- * @brief					Add a sample to the struct container.
- * @param context			implementation of the platform independent function interfaces, as pointer.
- * @param sample_container	The sample container struct to be filled.
- * @param sample_x			The X-axis value of the sample.
- * @param sample_y			The Y-axis value of the sample.
- * @param sample_z			The Z-axis value of the sample.
+ * @brief					Record a sample to the struct container.
+ * @param context			implementation of the platform independent linear algebra function interfaces.
+ * @param sample_container	the sample container struct to be filled.
+ * @param sample_x			the X-axis value of the sample.
+ * @param sample_y			the Y-axis value of the sample.
+ * @param sample_z			the Z-axis value of the sample.
  */
-void magneto_add_sample(
-	const magneto_matrix_math_context_t*	context,
+void magneto_sample(
+	const magneto_linear_algebra_context_t*	context,
 	magneto_sample_container_t*				sample_container,
-	const float_t							sample_x,
-	const float_t							sample_y,
-	const float_t							sample_z
+	float_t									sample_x,
+	float_t									sample_y,
+	float_t									sample_z
 );
 
 /**
  * @brief					Calculate the soft-iron calibration matrix and the hard-iron calibration vector based on the ATA matrix with samples.
- * @param context			implementation of the platform independent function interfaces, as pointer.
- * @param sample_container	The sample container struct with enough samples filled in.
- * @param soft_iron_matrix	The output matrix to hold the soft-iron calibration matrix, should be 3 rows and 3 cols.
- * @param hard_iron_vector	The output vector to hold the hard-iron calibration vector, should be 3 rows and 1 cols.
- * @retval					The status of the calculation. ("0" = no error occurred; other value = error occurs)
+ * @param context			implementation of the platform independent linear algebra function interfaces.
+ * @param sample_container	the sample container struct with enough samples filled in.
+ * @param soft_iron_matrix	the output matrix of the soft-iron calibration matrix, should be 3 rows and 3 cols.
+ * @param hard_iron_vector	the output vector of the hard-iron calibration vector, should be 3 rows and 1 col.
+ * @retval					the status of the calculation. ("0" = no error occurred; other value = error occurs)
  */
 int32_t magneto_calculate(
-	const magneto_matrix_math_context_t*	context,
+	const magneto_linear_algebra_context_t*	context,
 	const magneto_sample_container_t*		sample_container,
 	magneto_matrix_t*						soft_iron_matrix,
 	magneto_matrix_t*						hard_iron_vector
