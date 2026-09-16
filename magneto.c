@@ -16,10 +16,19 @@ magneto_sample_container_t* magneto_new_sample_container(const magneto_linear_al
 
 	// Initialize the coefficients of the sample container.
 	sample_container->sample_ata_matrix	= context->new_matrix(10U, 10U);	// Create the ATA matrix (information matrix/cross-product matrx) for the fitting.
+	sample_container->sample_norm_count	= 0U;								// Reset the count of magnetometer samples to 0 to avoid undefined values.
 	sample_container->sample_norm_sum	= 0.0f;								// Reset the sum of magnetometer sample strengths to 0.0f to avoid undefined values.
-	sample_container->sample_norm_count	= 0U;								// Reset the count of magnetometer samples to 0 to avoid undefined valueus.
 
 	return sample_container;
+}
+
+void magneto_reset_sample_container(const magneto_linear_algebra_context_t* context, magneto_sample_container_t* sample_container) {
+	// Clear the sample accumulation in the ATA matrix.
+	context->set_matrix_zeros_in_place(sample_container->sample_ata_matrix);
+
+	// Reset the coefficients in the sample container.
+	sample_container->sample_norm_count	= 0U;	// Reset the count of magnetometer samples to 0.
+	sample_container->sample_norm_sum	= 0.0f;	// Reset the sum of magnetometer sample strengths to 0.0f.
 }
 
 void magneto_delete_sample_container(const magneto_linear_algebra_context_t* context, magneto_sample_container_t* sample_container) {

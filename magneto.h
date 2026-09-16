@@ -65,7 +65,7 @@ typedef void (*set_matrix_coefficient_function_ptr)(
 );
 
 /**
- * @brief			Platform independent function type of adding a value to the existing value of an coefficient in an existing matrix.
+ * @brief			Platform independent function type of adding a value to the existing value of a coefficient in an existing matrix.
  * @param matrix	the matrix of the coefficient.
  * @param row		the row of the coefficient.
  * @param column	the column of the coefficient.
@@ -79,7 +79,7 @@ typedef void (*add_matrix_coefficient_function_ptr)(
 );
 
 /**
- * @brief			Platform independent function type of multiplying a value to the existing value of an coefficient in an existing matrix.
+ * @brief			Platform independent function type of multiplying a value to the existing value of a coefficient in an existing matrix.
  * @param matrix	the matrix of the coefficient.
  * @param row		the row of the coefficient.
  * @param column	the column of the coefficient.
@@ -173,6 +173,14 @@ typedef void (*normalize_matrix_in_place_function_ptr)(
 );
 
 /**
+ * @brief				Platform independent function type of setting values of all coefficients of an existing matrix to 0 in place.
+ * @param source_matrix	the matrix to be set to zeros.
+ */
+typedef void (*set_matrix_zeros_function_ptr)(
+	magneto_matrix_t* source_matrix
+);
+
+/**
  * @brief				Platform independent function type of multiplying an existing matrix with a scalar in place.
  * @param source_matrix	the matrix to be multiplied with scalar.
  * @param value			the scalar to be multiplied to the matrix.
@@ -217,6 +225,7 @@ typedef struct {
 	invert_matrix_in_place_function_ptr				invert_matrix_in_place;				/*!< Implementation function of inverting a matrix. */
 	transpose_matrix_in_place_function_ptr			transpose_matrix_in_place;			/*!< Implementation function of transposing a matrix in place. */
 	normalize_matrix_in_place_function_ptr			normalize_matrix_in_place;			/*!< Implementation function of normalizing all column vectors of a matrix in place. */
+	set_matrix_zeros_function_ptr					set_matrix_zeros_in_place;			/*!< Implementation function of setting all coefficients of a matrix to 0 in place. */
 	multiply_matrix_scalar_in_place_function_ptr	multiply_matrix_scalar_in_place;	/*!< Implementation function of multiplying a matrix with a scalar */
 	solve_matrix_eigen_function_ptr					solve_matrix_eigen;					/*!< Implementation function of solving eigenvectors and eigenvalues of a square matrix. */
 } magneto_linear_algebra_context_t;
@@ -226,8 +235,8 @@ typedef struct {
  */
 typedef struct {
 	magneto_matrix_t*	sample_ata_matrix;	/*!< The ATA matrix of the samples. */
-	float_t				sample_norm_sum;	/*!< The sum of length (strength) of the samples. */
 	uint32_t			sample_norm_count;	/*!< The count of the samples. */
+	float_t				sample_norm_sum;	/*!< The sum of length (strength) of the samples. */
 } magneto_sample_container_t;
 
 /**
@@ -236,6 +245,13 @@ typedef struct {
  * @retval			the created sample container struct.
  */
 magneto_sample_container_t* magneto_new_sample_container(const magneto_linear_algebra_context_t* context);
+
+/**
+ * @brief					Reset the given sample container to clear the samples for next sample collecting.
+ * @param context			implementation of the platform independent linear algebra function interfaces.
+ * @param sample_container	the sample container to reset.
+ */
+void magneto_reset_sample_container(const magneto_linear_algebra_context_t* context, magneto_sample_container_t* sample_container);
 
 /**
  * @brief					Delete the sample container struct.
