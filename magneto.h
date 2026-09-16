@@ -25,8 +25,8 @@ typedef struct {
  * @retval			the created matrix.
  */
 typedef magneto_matrix_t* (*new_matrix_function_ptr)(
-	int32_t rows,
-	int32_t columns
+	uint32_t rows,
+	uint32_t columns
 );
 
 /**
@@ -46,8 +46,8 @@ typedef void (*delete_matrix_function_ptr)(
  */
 typedef float_t (*get_matrix_coefficient_function_ptr)(
 	magneto_matrix_t*	matrix,
-	int32_t				row,
-	int32_t				column
+	uint32_t			row,
+	uint32_t			column
 );
 
 /**
@@ -59,8 +59,8 @@ typedef float_t (*get_matrix_coefficient_function_ptr)(
  */
 typedef void (*set_matrix_coefficient_function_ptr)(
 	magneto_matrix_t*	matrix,
-	int32_t				row,
-	int32_t				column,
+	uint32_t			row,
+	uint32_t			column,
 	float_t				value
 );
 
@@ -73,8 +73,8 @@ typedef void (*set_matrix_coefficient_function_ptr)(
  */
 typedef void (*add_matrix_coefficient_function_ptr)(
 	magneto_matrix_t*	matrix,
-	int32_t				row,
-	int32_t				column,
+	uint32_t			row,
+	uint32_t			column,
 	float_t				value
 );
 
@@ -87,8 +87,8 @@ typedef void (*add_matrix_coefficient_function_ptr)(
  */
 typedef void (*multiply_matrix_coefficient_function_ptr)(
 	magneto_matrix_t*	matrix,
-	int32_t				row,
-	int32_t				column,
+	uint32_t			row,
+	uint32_t			column,
 	float_t				value
 );
 
@@ -115,12 +115,12 @@ typedef void (*copy_matrix_function_ptr)(
  */
 typedef void (*copy_matrix_block_function_ptr)(
 	magneto_matrix_t*	source_matrix,
-	int32_t				from_row,
-	int32_t				from_column,
-	int32_t				to_row,
-	int32_t				to_column,
-	int32_t				rows,
-	int32_t				columns,
+	uint32_t			from_row,
+	uint32_t			from_column,
+	uint32_t			to_row,
+	uint32_t			to_column,
+	uint32_t			rows,
+	uint32_t			columns,
 	magneto_matrix_t*	destination_matrix
 );
 
@@ -227,7 +227,7 @@ typedef struct {
 typedef struct {
 	magneto_matrix_t*	sample_ata_matrix;	/*!< The ATA matrix of the samples. */
 	float_t				sample_norm_sum;	/*!< The sum of length (strength) of the samples. */
-	int32_t				sample_norm_count;	/*!< The count of the samples. */
+	uint32_t			sample_norm_count;	/*!< The count of the samples. */
 } magneto_sample_container_t;
 
 /**
@@ -253,11 +253,11 @@ void magneto_delete_sample_container(const magneto_linear_algebra_context_t* con
  * @param sample_z			the Z-axis value of the sample.
  */
 void magneto_sample(
-	const magneto_linear_algebra_context_t*	context,
-	magneto_sample_container_t*				sample_container,
-	float_t									sample_x,
-	float_t									sample_y,
-	float_t									sample_z
+	const	magneto_linear_algebra_context_t*	context,
+			magneto_sample_container_t*			sample_container,
+			float_t								sample_x,
+			float_t								sample_y,
+			float_t								sample_z
 );
 
 /**
@@ -269,10 +269,10 @@ void magneto_sample(
  * @retval					the status of the calculation. ("0" = no error occurred; other value = error occurs)
  */
 int32_t magneto_calculate(
-	const magneto_linear_algebra_context_t*	context,
-	const magneto_sample_container_t*		sample_container,
-	magneto_matrix_t*						soft_iron_matrix,
-	magneto_matrix_t*						hard_iron_vector
+	const	magneto_linear_algebra_context_t*	context,
+	const	magneto_sample_container_t*			sample_container,
+			magneto_matrix_t*					soft_iron_matrix,
+			magneto_matrix_t*					hard_iron_vector
 );
 
 #ifdef __cplusplus
