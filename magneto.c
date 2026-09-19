@@ -85,7 +85,8 @@ int32_t magneto_calculate(
 	const	magneto_linear_algebra_context_t*	context,
 	const	magneto_sample_container_t*			sample_container,
 			magneto_matrix_t*					soft_iron_matrix,
-			magneto_matrix_t*					hard_iron_vector
+			magneto_matrix_t*					hard_iron_vector,
+			float_t*							reference_length
 ) {
 	if (sample_container->sample_norm_count == 0) {
 		return -1;
@@ -299,13 +300,13 @@ int32_t magneto_calculate(
 	magneto_matrix_t* vdz	= context->new_matrix(3U, 3U);
 	magneto_matrix_t* SQ	= context->new_matrix(3U, 3U);
 
-	const float_t hm = sample_container->sample_norm_sum / (float) sample_container->sample_norm_count;
+	*reference_length = sample_container->sample_norm_sum / (float) sample_container->sample_norm_count;
 
 	context->multiply_matrix			(eigenvectors_real2, Dz, vdz);
 	context->transpose_matrix_in_place	(eigenvectors_real2);
 	context->multiply_matrix			(vdz, eigenvectors_real2, SQ);
 
-	context->multiply_matrix_scalar_in_place(SQ, hm / hmb);
+	context->multiply_matrix_scalar_in_place(SQ, *reference_length / hmb);
 	context->copy_matrix					(SQ, soft_iron_matrix);
 
 	context->delete_matrix(Dz);

@@ -282,13 +282,15 @@ void magneto_sample(
  * @param sample_container	the sample container struct with enough samples filled in.
  * @param soft_iron_matrix	the output matrix of the soft-iron calibration matrix, should be 3 rows and 3 cols.
  * @param hard_iron_vector	the output vector of the hard-iron calibration vector, should be 3 rows and 1 col.
+ * @param reference_length	The output scalar of the reference length of the calibrated magnetometer output.
  * @retval					the status of the calculation. ("0" = no error occurred; other value = error occurs)
  */
 int32_t magneto_calculate(
 	const	magneto_linear_algebra_context_t*	context,
 	const	magneto_sample_container_t*			sample_container,
 			magneto_matrix_t*					soft_iron_matrix,
-			magneto_matrix_t*					hard_iron_vector
+			magneto_matrix_t*					hard_iron_vector,
+			float_t*							reference_length
 );
 
 #ifdef __cplusplus
