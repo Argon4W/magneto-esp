@@ -62,16 +62,18 @@ void calibrate() {
         vTaskDelay(pdMS_TO_TICKS(5));
     }
     
-    // Reserve space for the output.
-    magneto_matrix_t* soft_iron_matrix = context.new_matrix(3, 3);
-    magneto_matrix_t* hard_iron_vector = context.new_matrix(3, 1);
+    // Reserve space for the coefficients output.
+    magneto_matrix_t*   soft_iron_matrix = context.new_matrix(3, 3);
+    magneto_matrix_t*   hard_iron_vector = context.new_matrix(3, 1);
+    float_t             reference_length = 0.0f;
     
-    // Calibrate.
+    // Calculate the calibration coefficients.
     magneto_calculate(
         &context,
         sample_container,
         soft_iron_matrix,
-        hard_iron_vector
+        hard_iron_vector,
+        &reference_length
     );
     
     // Delete the sample container.
