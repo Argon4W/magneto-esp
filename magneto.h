@@ -12,7 +12,7 @@ extern "C" {
 
 /**
  * @brief		Platform independent opaque matrix struct for holding implementation-specific handles of the matrix.
- * @attention	The matrix implementation should store the elements in float_t precision.
+ * @attention	The matrix implementation should store the coefficients in float_t precision.
  */
 typedef struct {
 	void* implementation_handle;
