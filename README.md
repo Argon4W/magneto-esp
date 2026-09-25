@@ -63,9 +63,9 @@ void calibrate() {
     }
     
     // Reserve space for the coefficients output.
-    magneto_matrix_t*   soft_iron_matrix = context.new_matrix(3, 3);
-    magneto_matrix_t*   hard_iron_vector = context.new_matrix(3, 1);
-    float_t             reference_length = 0.0f;
+    magneto_matrix_handle_t   soft_iron_matrix = context.new_matrix(3, 3);
+    magneto_matrix_handle_t   hard_iron_vector = context.new_matrix(3, 1);
+    float_t                   reference_length = 0.0f;
     
     // Calculate the calibration coefficients.
     magneto_calculate(
@@ -85,8 +85,8 @@ void calibrate() {
     float_t mag_z = ...;
     
     // Depends on the implementation.
-    float** soft_iron_handle = (float**) soft_iron_matrix->implementation_handle;
-    float** hard_iron_handle = (float**) hard_iron_vector->implementation_handle;
+    float** soft_iron_handle = (float**) soft_iron_matrix;
+    float** hard_iron_handle = (float**) hard_iron_vector;
     
     // Apply the hard iron offset first.
     mag_x -= hard_iron_handle[0][0];
