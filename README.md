@@ -34,10 +34,10 @@ void calibrate() {
         .copy_matrix_block = ...,
         .multiply_matrix = ...,
         .subtract_matrix = ...,
-        .invert_matrix_in_place = ...,
-        .transpose_matrix_in_place = ...,
-        .normalize_matrix_in_place = ...,
-        .multiply_matrix_scalar_in_place = ...,
+        .invert_matrix = ...,
+        .transpose_matrix = ...,
+        .normalize_matrix = ...,
+        .multiply_matrix_scalar = ...,
         .solve_matrix_eigen = ...
     };
     
