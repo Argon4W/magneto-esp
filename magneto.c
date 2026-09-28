@@ -340,10 +340,8 @@ int32_t magneto_calculate(
 	context->multiply_matrix_scalar(
 		/* value				= */ *reference_length / hmb,
 		/* source_matrix		= */ SQ,
-		/* destination_matrix	= */ SQ
+		/* destination_matrix	= */ soft_iron_matrix
 	);
-
-	context->copy_matrix(SQ, soft_iron_matrix);
 
 	context->delete_matrix(Dz);
 	context->delete_matrix(SQ);
