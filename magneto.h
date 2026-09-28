@@ -162,45 +162,53 @@ typedef struct {
 	);
 
 	/**
-	 * @brief				Invert an existing matrix in place.
-	 * @param source_matrix	the matrix to be inverted.
+	 * @brief						Invert an existing matrix.
+	 * @param source_matrix			the source matrix to be inverted.
+	 * @param destination_matrix	destination matrix to hold the result matrix.
 	 */
-	void (*invert_matrix_in_place)(
-		magneto_matrix_handle_t source_matrix
+	void (*invert_matrix)(
+		magneto_matrix_handle_t source_matrix,
+		magneto_matrix_handle_t destination_matrix
 	);
 
 	/**
-	 * @brief				Transpose an existing matrix in place.
-	 * @param source_matrix	the matrix to be transposed.
+	 * @brief						Transpose an existing matrix.
+	 * @param source_matrix			the source matrix to be transposed.
+	 * @param destination_matrix	destination matrix to hold the result matrix.
 	 */
-	void (*transpose_matrix_in_place)(
-		magneto_matrix_handle_t source_matrix
+	void (*transpose_matrix)(
+		magneto_matrix_handle_t source_matrix,
+		magneto_matrix_handle_t destination_matrix
 	);
 
 	/**
-	 * @brief				Normalize all column vectors of an existing matrix in place.
-	 * @param source_matrix	the matrix to be normalized.
+	 * @brief						Normalize all column vectors of an existing matrix.
+	 * @param source_matrix			the source matrix to be normalized.
+	 * @param destination_matrix	destination matrix to hold the result matrix.
 	 */
-	void (*normalize_matrix_in_place)(
-		magneto_matrix_handle_t source_matrix
+	void (*normalize_matrix)(
+		magneto_matrix_handle_t source_matrix,
+		magneto_matrix_handle_t destination_matrix
 	);
 
 	/**
-	 * @brief				Set values of all coefficients of an existing matrix to 0 in place.
-	 * @param source_matrix	the matrix to be set to zeros.
+	 * @brief						Multiply an existing matrix with a scalar.
+	 * @param value					the scalar to be multiplied to the matrix.
+	 * @param source_matrix			the source matrix to be multiplied with scalar.
+	 * @param destination_matrix	destination matrix to hold the result matrix.
 	 */
-	void (*set_matrix_zeros_in_place)(
-		magneto_matrix_handle_t source_matrix
-	);
-
-	/**
-	 * @brief				Multiply an existing matrix with a scalar in place.
-	 * @param source_matrix	the matrix to be multiplied with scalar.
-	 * @param value			the scalar to be multiplied to the matrix.
-	 */
-	void (*multiply_matrix_scalar_in_place)(
+	void (*multiply_matrix_scalar)(
+		float_t					value,
 		magneto_matrix_handle_t	source_matrix,
-		float_t					value
+		magneto_matrix_handle_t destination_matrix
+	);
+
+	/**
+	 * @brief						Set values of all coefficients of an existing matrix to 0.
+	 * @param destination_matrix	destination matrix to be set to zeros.
+	 */
+	void (*set_matrix_zeros)(
+		magneto_matrix_handle_t destination_matrix
 	);
 
 	/**

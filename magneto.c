@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <magneto.h>
 
 // Pre-inverted constraint matrix C
@@ -14,7 +15,7 @@ magneto_sample_container_t* magneto_new_sample_container(const magneto_linear_al
 	// Allocate the sample container in heap.
 	magneto_sample_container_t* sample_container = (magneto_sample_container_t*) malloc(sizeof(magneto_sample_container_t));
 
-	// Skip the initialization if the allocation is failed.
+	// Skip the initialization if the allocation failed.
 	if (sample_container == NULL) {
 		return NULL;
 	}
@@ -29,7 +30,7 @@ magneto_sample_container_t* magneto_new_sample_container(const magneto_linear_al
 
 void magneto_reset_sample_container(const magneto_linear_algebra_context_t* context, magneto_sample_container_t* sample_container) {
 	// Clear the sample accumulation in the ATA matrix.
-	context->set_matrix_zeros_in_place(sample_container->sample_ata_matrix);
+	context->set_matrix_zeros(sample_container->sample_ata_matrix);
 
 	// Reset the coefficients in the sample container.
 	sample_container->sample_norm_count	= 0U;	// Reset the count of magnetometer samples to 0.
@@ -107,7 +108,10 @@ int32_t magneto_calculate(
 	context->copy_matrix_block(sample_container->sample_ata_matrix, 6U, 0U, 0U, 0U, 4U, 6U, S12t);
 	context->copy_matrix_block(sample_container->sample_ata_matrix, 6U, 6U, 0U, 0U, 4U, 4U, S22);
 
-	context->invert_matrix_in_place(S22);
+	context->invert_matrix(
+		/* source_matrix		= */ S22,
+		/* destination_matrix	= */ S22
+	);
 
 	magneto_matrix_handle_t S22a = context->new_matrix(4U, 6U);
 	magneto_matrix_handle_t S22b = context->new_matrix(6U, 6U);
@@ -193,17 +197,28 @@ int32_t magneto_calculate(
 	context->delete_matrix(eigenvectors_real);
 	context->delete_matrix(eigenvalues_real);
 
-	context->normalize_matrix_in_place(v1);
+	context->normalize_matrix(
+		/* source_matrix		= */ v1,
+		/* destination_matrix	= */ v1
+	);
 
 	if (context->get_matrix_coefficient(v1, 0U, 0U) < 0.0f) {
-		context->multiply_matrix_scalar_in_place(v1, -1);
+		context->multiply_matrix_scalar(
+			/* value				= */ -1.0f,
+			/* source_matrix		= */ v1,
+			/* destination_matrix	= */ v1
+		);
 	}
 
 	// Calculate v2 = S22a * v1 ( 4x1 = 4x6 * 6x1).
 	context->multiply_matrix	(S22a, v1, v2);
 	context->delete_matrix		(S22a);
 
-	context->multiply_matrix_scalar_in_place(v2, -1.0f);
+	context->multiply_matrix_scalar(
+		/* value				= */ -1.0f,
+		/* source_matrix		= */ v2,
+		/* destination_matrix	= */ v2
+	);
 
 	magneto_matrix_handle_t Q	= context->new_matrix(3U, 3U);
 	magneto_matrix_handle_t Qi	= context->new_matrix(3U, 3U);
@@ -237,12 +252,16 @@ int32_t magneto_calculate(
 	context->delete_matrix(v1);
 	context->delete_matrix(v2);
 
-	context->copy_matrix			(Q, Qi);
-	context->invert_matrix_in_place	(Qi);
+	context->invert_matrix(Q, Qi);
 
 	// Calculate B = Q-1 * U ( 3x1 = 3x3 * 3x1) (B = hard_iron_vector).
-	context->multiply_matrix					(Qi, U, hard_iron_vector);
-	context->multiply_matrix_scalar_in_place	(hard_iron_vector, -1.0f);
+	context->multiply_matrix(Qi, U, hard_iron_vector);
+
+	context->multiply_matrix_scalar(
+		/* value				= */ -1.0f,
+		/* source_matrix		= */ hard_iron_vector,
+		/* destination_matrix	= */ hard_iron_vector
+	);
 
 	context->delete_matrix(Qi);
 	context->delete_matrix(U);
@@ -257,9 +276,8 @@ int32_t magneto_calculate(
 	magneto_matrix_handle_t BtQB	= context->new_matrix(1U, 1U);
 
 	// Then calculate BtQB = BT * QB    ( 1x1 = 1x3 * 3x1).
-	context->copy_matrix				(hard_iron_vector, Bt);
-	context->transpose_matrix_in_place	(Bt);
-	context->multiply_matrix			(Bt, QB, BtQB);
+	context->transpose_matrix	(hard_iron_vector, Bt);
+	context->multiply_matrix	(Bt, QB, BtQB);
 
 	// Calculate hmb = sqrt(BtQb - J).
 	const float_t hmb = sqrt(context->get_matrix_coefficient(BtQB, 0U, 0U) - J);
@@ -271,8 +289,8 @@ int32_t magneto_calculate(
 	// Calculate SQ, the square root of matrix Q.
 	magneto_matrix_handle_t eigenvectors_real2	= context->new_matrix(3U, 3U);
 	magneto_matrix_handle_t eigenvectors_imag2	= context->new_matrix(3U, 3U);
-	magneto_matrix_handle_t eigenvalues_real2		= context->new_matrix(3U, 1U);
-	magneto_matrix_handle_t eigenvalues_imag2		= context->new_matrix(3U, 1U);
+	magneto_matrix_handle_t eigenvalues_real2	= context->new_matrix(3U, 1U);
+	magneto_matrix_handle_t eigenvalues_imag2	= context->new_matrix(3U, 1U);
 
 	const uint8_t result2 = context->solve_matrix_eigen(
 		/* source_matrix					= */ Q,
@@ -294,7 +312,10 @@ int32_t magneto_calculate(
 	}
 
 	// Normalize all column eigenvectors in the matrix.
-	context->normalize_matrix_in_place(eigenvectors_real2);
+	context->normalize_matrix(
+		/* source_matrix		= */ eigenvectors_real2,
+		/* destination_matrix	= */ eigenvectors_real2
+	);
 
 	magneto_matrix_handle_t Dz = context->new_matrix(3U, 3U);
 
@@ -307,12 +328,22 @@ int32_t magneto_calculate(
 
 	*reference_length = sample_container->sample_norm_sum / (float) sample_container->sample_norm_count;
 
-	context->multiply_matrix			(eigenvectors_real2, Dz, vdz);
-	context->transpose_matrix_in_place	(eigenvectors_real2);
-	context->multiply_matrix			(vdz, eigenvectors_real2, SQ);
+	context->multiply_matrix(eigenvectors_real2, Dz, vdz);
 
-	context->multiply_matrix_scalar_in_place(SQ, *reference_length / hmb);
-	context->copy_matrix					(SQ, soft_iron_matrix);
+	context->transpose_matrix(
+		/* source_matrix		= */ eigenvectors_real2,
+		/* destination_matrix	= */ eigenvectors_real2
+	);
+
+	context->multiply_matrix(vdz, eigenvectors_real2, SQ);
+
+	context->multiply_matrix_scalar(
+		/* value				= */ *reference_length / hmb,
+		/* source_matrix		= */ SQ,
+		/* destination_matrix	= */ SQ
+	);
+
+	context->copy_matrix(SQ, soft_iron_matrix);
 
 	context->delete_matrix(Dz);
 	context->delete_matrix(SQ);
