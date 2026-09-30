@@ -4,8 +4,8 @@ maintainers:
   - "Argon4W"
 description: "Magneto: magnetometer calibration using Li's ellipsoid specific fitting algorithm."
 license: "MIT License"
-url: "https://github.com/Argon4W/magneto-pid"
-repository: "https://github.com/Argon4W/magneto-pid.git"
-issues: "https://github.com/Argon4W/magneto-pid/issues"
+url: "https://github.com/Argon4W/magneto-esp"
+repository: "https://github.com/Argon4W/magneto-esp.git"
+issues: "https://github.com/Argon4W/magneto-esp/issues"
 dependencies:
   idf: ">=5.0"
