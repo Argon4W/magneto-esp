@@ -23,7 +23,7 @@ The following example shows how to use this library to calibrate raw magnetomete
 
 void calibrate() {
     // Setup the math context.
-    magneto_matrix_math_context_t context = {
+    magneto_linear_algebra_context_t context = {
         .new_matrix = ...,
         .delete_matrix = ...,
         .get_matrix_coefficient = ...,
@@ -38,6 +38,7 @@ void calibrate() {
         .transpose_matrix = ...,
         .normalize_matrix = ...,
         .multiply_matrix_scalar = ...,
+        .set_matrix_zeros = ...,
         .solve_matrix_eigen = ...
     };
     
