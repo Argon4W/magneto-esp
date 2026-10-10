@@ -272,7 +272,7 @@ int32_t magneto_calculate(
 	context->multiply_matrix(Q, hard_iron_vector, QB);
 
 	// 1*1 matrix.
-	magneto_matrix_handle_t Bt	= context->new_matrix(3U, 1U);
+	magneto_matrix_handle_t Bt		= context->new_matrix(1U, 3U);
 	magneto_matrix_handle_t BtQB	= context->new_matrix(1U, 1U);
 
 	// Then calculate BtQB = BT * QB    ( 1x1 = 1x3 * 3x1).
